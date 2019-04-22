@@ -8,6 +8,12 @@ LABEL maintainer="felipederodrigues"
 ARG LEPTONICA_VERSION="1.78.0"
 ARG AUTOCONF_ARCHIVE_VERSION="2019.01.06"
 ARG TESSERACT_TAG_VERSION="5.0.0-alpha"
+ARG LIBTESSERACT="libtesseract.so.5"
+ARG LIBLEPT="liblept.so.5"
+ARG LIBJPEG="libjpeg.so.62"
+ARG LIBWEBP="libwebp.so.4"
+ARG LIBSTDC="libstdc++.so.6"
+ARG TESSDATA_LANGUAGE="eng"
 
 ENV PKG_CONFIG_PATH /usr/local/lib/pkgconfig
 
@@ -48,13 +54,6 @@ RUN git clone https://github.com/tesseract-ocr/tesseract.git tesseract-ocr && \
 WORKDIR /tmp
 
 # Get all needed files and zip it
-ARG LIBTESSERACT="libtesseract.so.5"
-ARG LIBLEPT="liblept.so.5"
-ARG LIBJPEG="libjpeg.so.62"
-ARG LIBWEBP="libwebp.so.4"
-ARG LIBSTDC="libstdc++.so.6"
-ARG TESSDATA_LANGUAGE="eng"
-
 RUN mkdir tesseract-standalone && \
     cd tesseract-standalone && \
     cp /usr/local/bin/tesseract . && \
@@ -71,10 +70,10 @@ RUN mkdir tesseract-standalone && \
     cp /usr/local/share/tessdata/configs/pdf configs/ && \
     cp /usr/local/share/tessdata/pdf.ttf . && \
     cd .. && \
-    zip -r ~/tesseract-standalone.zip * && \
+    sudo chmod 777 /tmp/tesseract-standalone -R && \
     mkdir /output && \
-    cp ~/tesseract-standalone.zip /output/tesseract-standalone.zip
-    
+    zip -r /output/tesseract-standalone.zip *
+
 WORKDIR /output
 
 CMD [ "bash" ]
